@@ -97,7 +97,7 @@ Open your browser and navigate to:
 ## 🔌 API Endpoints
 
 * **`GET /`** — Redirects to the static glassmorphism frontend dashboard.
-* **`POST /api/v1/search`** — Accepts a company query (e.g., `{"company_details": "Stripe"}`), crawls top search results, and returns a JSON payload containing the `brief` (with Markdown citations) and an initial `email_draft`.
+* **`POST /api/v1/search`** — Accepts a company query (e.g., `{"company_details": "Tesla"}`, `{"company_details": "Anthropic"}`), crawls top search results, and returns a JSON payload containing the `brief` (with Markdown citations) and an initial `email_draft`.
 * **`POST /api/v1/personalize-email`** — Accepts company context and an existing email draft to rewrite and fine-tune the outbound copy.
 
 ---
