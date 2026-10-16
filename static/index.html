@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Research Agent</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      --glass-bg: rgba(30, 41, 59, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    header {
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      background: linear-gradient(to right, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      box-shadow: var(--glass-shadow);
+      padding: 1.75rem;
+    }
+
+    .search-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.99);
+    }
+
+    .summary-box {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-height: 200px;
+    }
+
+    .summary-header {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .summary-content {
+      line-height: 1.6;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      flex-grow: 1;
+    }
+
+    .summary-content > * + * {
+      margin-top: 0.75rem;
+    }
+
+    .summary-content h1,
+    .summary-content h2,
+    .summary-content h3,
+    .summary-content h4,
+    .email-content h1,
+    .email-content h2,
+    .email-content h3,
+    .email-content h4 {
+      color: #f8fafc;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-content p,
+    .summary-content li,
+    .email-content p,
+    .email-content li {
+      color: #cbd5e1;
+    }
+
+    .summary-content ul,
+    .summary-content ol,
+    .email-content ul,
+    .email-content ol {
+      padding-left: 1.25rem;
+      margin: 0.5rem 0;
+    }
+
+    .summary-content a,
+    .email-content a {
+      color: #a5b4fc;
+      word-break: break-word;
+    }
+
+    .summary-content strong,
+    .email-content strong {
+      color: #f8fafc;
+    }
+
+    .summary-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-secondary {
+      padding: 0.625rem 1.25rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+      padding: 1rem;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .modal-header h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .btn-close:hover {
+      color: var(--text-main);
+    }
+
+    .email-content {
+      background: rgba(15, 23, 42, 0.4);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      color: #e2e8f0;
+      line-height: 1.6;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .email-content > * + * {
+      margin-top: 0.75rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
+    }
+
+    .btn-small {
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem;
+    }
+
+    .personalize-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      z-index: 200;
+    }
+
+    .personalize-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .personalize-dialog {
+      width: min(420px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .personalize-label {
+      display: block;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .personalize-input {
+      width: 100%;
+      min-height: 100px;
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--text-main);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 0.75rem 0.875rem;
+      resize: vertical;
+      font: inherit;
+    }
+
+    .personalize-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .personalize-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 640px) {
+      header h1 {
+        font-size: 1.75rem;
+      }
+      .glass-card {
+        padding: 1.25rem;
+      }
+      .modal-actions,
+      .personalize-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Company Research Agent</h1>
+    </header>
+
+    <main class="glass-card">
+      <form class="search-form" id="researchForm">
+        <input 
+          type="text"
+          class="search-input"
+          id="searchInput"
+          name="query"
+          placeholder="Enter: Company, Industry (e.g. Tesla, Automotive)"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" class="btn-submit" id="researchBtn">Research Company</button>
+      </form>
+    </main>
+
+    <section class="glass-card summary-box">
+      <div class="summary-header">Research Findings</div>
+      <div class="summary-content" id="summaryText">
+        Submit a target company above to initiate research. Findings and verified citations will appear here.
+      </div>
+      <div class="summary-footer">
+        <button class="btn-secondary" id="openEmailBtn">Open Email Draft</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-overlay" id="emailModal">
+    <div class="glass-card modal-card">
+      <div class="modal-header">
+        <h3>Generated Email Draft</h3>
+        <button class="btn-close" id="closeEmailBtn">&times;</button>
+      </div>
+      <div class="email-content" id="emailText">
+        Subject: [Company Research Results]
+
+        Hi [Name],
+
+        Research results will populate here once you run a company search.
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary btn-small" id="personalizeBtn">Personalize</button>
+        <button class="btn-secondary btn-small" id="copyEmailBtn">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="personalize-overlay" id="personalizeModal">
+    <div class="glass-card personalize-dialog">
+      <div class="modal-header">
+        <h3>Personalize Email</h3>
+        <button class="btn-close" id="closePersonalizeBtn">&times;</button>
+      </div>
+      <label class="personalize-label" for="companyContextInput">What does your company do</label>
+      <textarea id="companyContextInput" class="personalize-input" placeholder="Describe your company, product, or service..."></textarea>
+      <div class="personalize-actions">
+        <button class="btn-secondary btn-small" id="cancelPersonalizeBtn">Cancel</button>
+        <button class="btn-submit btn-small" id="confirmPersonalizeBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    const emailModal = document.getElementById('emailModal');
+    const openEmailBtn = document.getElementById('openEmailBtn');
+    const closeEmailBtn = document.getElementById('closeEmailBtn');
+    const researchForm = document.getElementById('researchForm');
+    const researchBtn = document.getElementById('researchBtn');
+    const summaryText = document.getElementById('summaryText');
+    const emailText = document.getElementById('emailText');
+    const searchInput = document.getElementById('searchInput');
+    const personalizeBtn = document.getElementById('personalizeBtn');
+    const copyEmailBtn = document.getElementById('copyEmailBtn');
+    const personalizeModal = document.getElementById('personalizeModal');
+    const closePersonalizeBtn = document.getElementById('closePersonalizeBtn');
+    const cancelPersonalizeBtn = document.getElementById('cancelPersonalizeBtn');
+    const confirmPersonalizeBtn = document.getElementById('confirmPersonalizeBtn');
+    const companyContextInput = document.getElementById('companyContextInput');
+
+    function renderMarkdown(markdownText) {
+      const text = typeof markdownText === 'string' ? markdownText : '';
+      if (window.marked && typeof marked.parse === 'function') {
+        return marked.parse(text, { breaks: true, gfm: true });
+      }
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/ /g, '<br>');
+    }
+
+    function openPersonalizeDialog() {
+      personalizeModal.classList.add('active');
+      companyContextInput.focus();
+    }
+
+    function closePersonalizeDialog() {
+      personalizeModal.classList.remove('active');
+      companyContextInput.value = '';
+    }
+
+    function copyEmailDraft() {
+      const textToCopy = emailText.innerText || emailText.textContent || '';
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+          copyEmailBtn.textContent = 'Copied';
+          setTimeout(() => {
+            copyEmailBtn.textContent = 'Copy';
+          }, 1200);
+        })
+        .catch(() => {
+          alert('Unable to copy email draft in this browser.');
+        });
+    }
+
+    openEmailBtn.addEventListener('click', () => {
+      emailModal.classList.add('active');
+    });
+
+    closeEmailBtn.addEventListener('click', () => {
+      emailModal.classList.remove('active');
+    });
+
+    emailModal.addEventListener('click', (e) => {
+      if (e.target === emailModal) {
+        emailModal.classList.remove('active');
+      }
+    });
+
+    personalizeBtn.addEventListener('click', openPersonalizeDialog);
+    closePersonalizeBtn.addEventListener('click', closePersonalizeDialog);
+    cancelPersonalizeBtn.addEventListener('click', closePersonalizeDialog);
+    personalizeModal.addEventListener('click', (e) => {
+      if (e.target === personalizeModal) {
+        closePersonalizeDialog();
+      }
+    });
+
+    copyEmailBtn.addEventListener('click', copyEmailDraft);
+
+    confirmPersonalizeBtn.addEventListener('click', () => {
+      const companyDetails = companyContextInput.value.trim();
+      if (!companyDetails) {
+        alert('Please tell us what your company does before confirming.');
+        return;
+      }
+
+      const currentDraft = emailText.innerText || emailText.textContent || '';
+
+      confirmPersonalizeBtn.disabled = true;
+      confirmPersonalizeBtn.textContent = 'Sending...';
+
+      fetch('/api/v1/personalize-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_context: companyDetails,
+          email_draft: currentDraft
+        })
+      })
+      .then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || 'Personalization request failed');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const personalizedDraft = data.email_draft || data.personalized_email || data.message || currentDraft;
+        emailText.innerHTML = renderMarkdown(personalizedDraft);
+        closePersonalizeDialog();
+      })
+      .catch((err) => {
+        alert('Unable to personalize the email: ' + (err.message || err));
+      })
+      .finally(() => {
+        confirmPersonalizeBtn.disabled = false;
+        confirmPersonalizeBtn.textContent = 'Confirm';
+      });
+    });
+
+    openEmailBtn.disabled = true;
+
+    researchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const companyName = searchInput.value.trim();
+      if (!companyName) {
+        return;
+      }
+
+      researchBtn.disabled = true;
+      researchBtn.textContent = 'Searching...';
+      summaryText.innerHTML = 'Searching the web and generating a brief — please wait...';
+
+      fetch('/api/v1/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ company_details: companyName })
+      })
+      .then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || 'Request failed');
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const brief = data.brief || data.answer || JSON.stringify(data, null, 2);
+        const emailDraft = data.email_draft || '';
+
+        summaryText.innerHTML = renderMarkdown(brief);
+        emailText.innerHTML = renderMarkdown(emailDraft);
+
+        if (emailDraft) {
+          openEmailBtn.disabled = false;
+        } else {
+          openEmailBtn.disabled = true;
+        }
+      })
+      .catch((err) => {
+        const errorMessage = 'Error: ' + (err.message || err);
+        summaryText.textContent = errorMessage;
+        emailText.textContent = errorMessage;
+        openEmailBtn.disabled = true;
+      })
+      .finally(() => {
+        researchBtn.disabled = false;
+        researchBtn.textContent = 'Research Company';
+      });
+    });
+  </script>
+</body>
+</html>
