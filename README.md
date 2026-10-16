@@ -49,6 +49,7 @@ company-research-agent/
 
 * **Python 3.10+** installed.
 * **Ollama** running locally with your target model loaded (e.g., `ollama run gemma4_e4b_custom`).
+* **uv** for quick start.
 
 ### 2. Clone and Install Dependencies
 
@@ -59,14 +60,20 @@ Using modern Python packaging (`uv` or standard `pip`):
 git clone https://github.com/neonmercenary/company-research-agent.git
 cd company-research-agent
 
-# Create and activate a virtual environment
+# 1. Use uv
+uv sync
+
+# or
+
+# 2. Create and activate a virtual environment
 python -m venv .venv
 source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
 
-# Install project dependencies
-pip install fastapi uvicorn crawl4ai duckduckgo-search beautifulsoup4 pydantic httpx
 
-# Initialize Crawl4AI browser binaries
+# 2.1 Install project dependencies
+pip install fastapi uvicorn crawl4ai ddgs beautifulsoup4 pydantic httpx
+
+# 2.2 Initialize Crawl4AI browser binaries
 crawl4ai-setup
 
 ```
