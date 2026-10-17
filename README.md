@@ -8,9 +8,6 @@
 
 ![Email draft screenshot](static/cra_3.png)
 
-Note: screenshots are included in the repository under the `static/` folder. You can reference images in the README using relative paths, for example:
-
-
 
 An autonomous, zero-API local intelligence agent that researches companies from public web data, extracts verified key metrics, generates a structured executive brief with verifiable Markdown citations, and automatically drafts personalized outbound sales copy.
 
