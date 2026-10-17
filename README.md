@@ -1,8 +1,31 @@
 # 🏢 Company Research Agent
 
+## Demo
+
+![Dashboard screenshot](static/cra_1.png)
+
+![Research results screenshot](static/cra_2.png)
+
+![Email draft screenshot](static/cra_3.png)
+
+Note: screenshots are included in the repository under the `static/` folder. You can reference images in the README using relative paths, for example:
+
+```md
+![Alt text](static/cra_1.png)
+```
+
 An autonomous, zero-API local intelligence agent that researches companies from public web data, extracts verified key metrics, generates a structured executive brief with verifiable Markdown citations, and automatically drafts personalized outbound sales copy.
 
-Built as **Day 2** of an intensive 7-day production engineering sprint.
+Built as **Day 2** of a production engineering sprint.
+
+---
+
+## How it works
+1. Enter a company or industry.
+2. The agent crawls public sources.
+3. It generates a brief with citations.
+4. It drafts a personalized outreach email. 
+5. You can presonalize the email draft by putting details about you, your company etc.
 
 ---
 
