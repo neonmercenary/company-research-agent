@@ -10,9 +10,7 @@
 
 Note: screenshots are included in the repository under the `static/` folder. You can reference images in the README using relative paths, for example:
 
-```md
-![Alt text](static/cra_1.png)
-```
+
 
 An autonomous, zero-API local intelligence agent that researches companies from public web data, extracts verified key metrics, generates a structured executive brief with verifiable Markdown citations, and automatically drafts personalized outbound sales copy.
 
