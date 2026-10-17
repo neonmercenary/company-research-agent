@@ -100,7 +100,7 @@ def search(data: QueryReq):
         1. An Executive Brief summarizing the company, products, and recent updates.
         2. A tailored Cold Email Draft pitching a relevant service to this company.
 
-    Every factual claim, statistic, or feature MUST include an explicit inline Markdown link citation using the exact format: [Source Title](URL).
+    Every factual claim, statistic, or feature MUST include an explicit inline Markdown link citation using the exact format: [Source Title Website Name](URL).
     Use ONLY the URLs and Titles provided in the source metadata. Do not hallucinate or guess links.
     Explicitly state if context is not available for the query.
 
